@@ -25,33 +25,53 @@ public class Labyrinth {
 
 	// Constructs the grid defined in the file specified
 	public Labyrinth(String filename) {
-		data = new char[rows][cols];
+		data = readData(filename);
 	}
 
 	// Finds a path through the labyrinth and returns the number of moves required to exit
 	public int findPath() {
-		
+		char c = 'C';
+		for (int x = 0; x < data.length; x++) {
+			for (int y = 0; y < data[x].length; y++) {
+				if (data[x][y] == c) {
+					findPath(x, y, false);
+					return 0;
+				}
+			}
+		}
+		return -1;
 	}
 
 	// Private recursive version of findPath()
 	private boolean findPath(int x, int y, boolean cloak) {
-		 if (data[x][y] == '#' || data[x][y] == '!' || data[x][y] == 'A' && !cloak) {
+		//System.out.print(this);
+		char d = data[x][y];
+		System.out.println(d);
+		 if (d == '#' || d == '!' || (d == 'A' || d == '?') && !cloak) {
 			 return false;
-		 } else if (x == 0 || y == 0 || x == data.length || y == data[0].length) {
-			 data[x][y] = '!';
+		 } else if (d == 'X') {
+			 if (cloak) {
+				 data[x][y] = '!';
+			 } else {
+				 data[x][y] = '?';
+			 }
 			 return true;
 		 } else {
-			 if (data[x][y] == '@') {
+			 if (d == '@') {
 				 cloak = true;
 			 }
-			 data[x][y] = '!';
+			 if (cloak) {
+				 data[x][y] = '!';
+			 } else {
+				 data[x][y] = '?';
+			 }
 			 if (findPath(x,y-1,cloak))
 				 return true;
-			 if (!findPath(x,y+1,cloak))
+			 if (findPath(x,y+1,cloak))
 				 return true;
-			 if (!findPath(x-1,y,cloak))
+			 if (findPath(x-1,y,cloak))
 				 return true;
-			 if(!findPath(x+1,y,cloak))
+			 if (findPath(x+1,y,cloak))
 				 return true;
 			 data[x][y] = ' ';
 			 return false;
