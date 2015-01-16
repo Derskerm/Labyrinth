@@ -25,22 +25,25 @@ public class Labyrinth {
 
 	// Constructs the grid defined in the file specified
 	public Labyrinth(String filename) {
-
+		data = new char[rows][cols];
 	}
 
 	// Finds a path through the labyrinth and returns the number of moves required to exit
 	public int findPath() {
-
+		
 	}
 
 	// Private recursive version of findPath()
 	private boolean findPath(int x, int y, boolean cloak) {
-		 if (data[x][y] == '*' || data[x][y] == '!') {
+		 if (data[x][y] == '#' || data[x][y] == '!' || data[x][y] == 'A' && !cloak) {
 			 return false;
 		 } else if (x == 0 || y == 0 || x == data.length || y == data[0].length) {
 			 data[x][y] = '!';
 			 return true;
 		 } else {
+			 if (data[x][y] == '@') {
+				 cloak = true;
+			 }
 			 data[x][y] = '!';
 			 if (findPath(x,y-1,cloak))
 				 return true;
@@ -48,7 +51,7 @@ public class Labyrinth {
 				 return true;
 			 if (!findPath(x-1,y,cloak))
 				 return true;
-			 if(!findPath(x+1,y))
+			 if(!findPath(x+1,y,cloak))
 				 return true;
 			 data[x][y] = ' ';
 			 return false;
@@ -57,7 +60,14 @@ public class Labyrinth {
 
 	// Formats this grid as a String to be printed (one call to this method returns the whole multi-line grid)
 	public String toString() {
-
+		String s = "";
+		for (int x = 0; x < data.length; x++) {
+			for (int y = 0; y < data[x].length; y++) {
+				s += data[x][y];
+			}
+			s += "\n";
+		}
+		return s;
 	}
 
 	public char[][] readData (String filename) {
